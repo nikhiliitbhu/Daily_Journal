@@ -1,0 +1,8 @@
+.element{
+    margin: 2rem;
+}
+
+.heading, .data{
+    padding: 0.5rem;
+    word-break: break-word;
+}

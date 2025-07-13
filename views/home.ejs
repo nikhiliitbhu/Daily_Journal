@@ -1,0 +1,22 @@
+<%- include('header')%>
+
+<div class="element">
+
+
+<% for(let i = 0; i < vlogs.length; i++){ %>
+    <div class="element">
+        <h1 class="heading"><%= vlogs[i].key %></h1>
+        <p class="data"><%= vlogs[i].value.slice(0,100) %>
+
+        <% if(vlogs[i].value.length > 100){ %>
+        <%const url = "http://localhost:3000/" + "%%" +  vlogs[i].key.replace(/\s+/g, "*"); %>
+            <a href=<%=url%> class=<%=vlogs[i].key%> id="readMore">...Read more</a>
+        <% } %>
+            </p>
+    </div>
+<%} %>
+
+
+<script src="js/script.js"></script>
+<%- include('footer')%>
+

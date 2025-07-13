@@ -1,0 +1,28 @@
+<%- include('header')%>
+
+<div class="contact-container">
+    <div class="contact-info">
+      <h2>Contact Us</h2>
+      <p>We’d love to hear from you! Reach out to us anytime.</p>
+      <ul>
+        <li><strong>📞 Phone:</strong> +91-7355332624</li>
+        <li><strong>📧 Email:</strong> nksingh7000@gmail.com</li>
+        <li><strong>📍 Address:</strong> Noida, India</li>
+      </ul>
+    </div>
+
+    <div class="contact-form">
+      <form action="/submit" method="post">
+        <h2>Send a Message</h2>
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <input type="text" name="subject" placeholder="Subject" required>
+        <textarea name="message" placeholder="Your Message" rows="6" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+  </div>
+
+
+<%- include('footer')%>
+
