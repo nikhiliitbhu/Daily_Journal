@@ -1,51 +1,70 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
-app.set('view engine','ejs');
+app.set('view engine', 'ejs');
 
-const vlogs = [
-  { key: "HOME", value: "This is my personal vlogging tool.This is my personal vlogging tool.This is my personal vlogging tool.This is my personal vlogging tool.This is my personal vlogging tool.This is my personal vlogging tool.This is my personal vlogging tool." }
-];
+// Schema and model
+const vlogSchema = new mongoose.Schema({
+  key: String,
+  value: String
+});
+const Vlog = mongoose.model('vlogs', vlogSchema);
 
+let vlogs = [];
 
-app.listen(port, function(){
-    console.log("app is up at " + port);
-})
+// Connect once
+mongoose.connect(process.env.MONGO_URI)
+  .then(async () => {
+    console.log("MongoDB connected!");
 
-app.get("/", function(req, res){
-    res.render("home",{title: "home", vlogs: vlogs});
-})
+    // Fetch vlogs and generate routes
+    vlogs = await Vlog.find({});
+    generateDynamicRoutes();
+  })
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+  });
 
-app.get("/about", function(req, res){
-    res.render("about",{title: "about"});
-})
-
-app.get("/contact", function(req, res){
-    res.render("contact",{title: "contacts"});
-})
-
-app.get("/write", function(req, res){
-    res.render("write",{title: 'write'});
-})
-
-app.post("/write", function(req, res){
-    vlogs.push({key: req.body.title, value: req.body.post});
-    dynamicGenerator();
-    res.redirect("/");
-})
-
-
-let dynamicGenerator = function(){
+// Dynamic route generator
+let generateDynamicRoutes = function(){
 for(let i = 0; i < vlogs.length; i++){
-    app.get(`/%%`+`${vlogs[i].key.replace(/\s+/g, "*")}`, function(req, res){
+    app.get(`/${vlogs[i].key.replace(/\s+/g, "-")}`, function(req, res){
         res.render("special", {title: vlogs[i].key, post: vlogs[i].value});
     })
 }
 };
 
-dynamicGenerator();
+// Routes
+app.get("/", (req, res) => {
+  res.render("home", { title: "home", vlogs: vlogs });
+});
+
+app.get("/about", (req, res) => {
+  res.render("about", { title: "about" });
+});
+
+app.get("/contact", (req, res) => {
+  res.render("contact", { title: "contacts" });
+});
+
+app.get("/write", (req, res) => {
+  res.render("write", { title: "write" });
+});
+
+app.post("/write", async (req, res) => {
+  await Vlog.insertOne({ key: req.body.title, value: req.body.post });
+  vlogs = await Vlog.find({}); // Refresh local vlogs
+  generateDynamicRoutes();     // Re-create dynamic routes
+  res.redirect("/");
+});
+
+app.listen(port, () => {
+  console.log("App is running on port " + port);
+});
