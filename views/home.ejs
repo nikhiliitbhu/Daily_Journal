@@ -9,7 +9,7 @@
         <p class="data"><%= vlogs[i].value.slice(0,100) %>
 
         <% if(vlogs[i].value.length > 100){ %>
-        <%const url = "http://localhost:3000/" + "%%" +  vlogs[i].key.replace(/\s+/g, "*"); %>
+        <%const url = "http://localhost:3000/" +  vlogs[i].key.replace(/\s+/g, "-"); %>
             <a href=<%=url%> class=<%=vlogs[i].key%> id="readMore">...Read more</a>
         <% } %>
             </p>
